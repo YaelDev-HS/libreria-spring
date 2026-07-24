@@ -55,8 +55,11 @@ public class HandleExceptions {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+        System.out.println(ex);
+
         Map<String, Object> response = new HashMap<>();
         response.put("error", "Ocurrió un error inesperado, por favor intente de nuevo más tarde.");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
 }

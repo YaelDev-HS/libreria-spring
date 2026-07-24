@@ -1,42 +1,66 @@
 package com.xiplatani.viajes.libreria.application.useCases;
 
-import com.xiplatani.viajes.libreria.application.dtos.auth.RegisterUserDto;
-import com.xiplatani.viajes.libreria.domain.exceptions.CustomException;
-import com.xiplatani.viajes.libreria.domain.services.UserService;
-
-import com.xiplatani.viajes.libreria.domain.models.User;
-
-import java.util.HashMap;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+
+import com.xiplatani.viajes.libreria.application.dtos.auth.LoginUserDto;
+import com.xiplatani.viajes.libreria.application.dtos.auth.RegisterUserDto;
+import com.xiplatani.viajes.libreria.application.dtos.users.UserDto;
+import com.xiplatani.viajes.libreria.domain.exceptions.CustomException;
+import com.xiplatani.viajes.libreria.domain.models.Role;
+import com.xiplatani.viajes.libreria.domain.models.User;
+import com.xiplatani.viajes.libreria.domain.repositories.IRoleRepository;
+import com.xiplatani.viajes.libreria.domain.repositories.IUserRepository;
 
 @Service
 public class AuthUseCases {
 
-    private final UserService service;
+    private final IUserRepository userRepository;
+    private final IRoleRepository roleRepository;
 
-    public AuthUseCases(UserService service) {
-        this.service = service;
+    public AuthUseCases(IUserRepository userRepository, IRoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
-    public Object registerUser(RegisterUserDto user) {
-        boolean ok = service.existsByEmail(user.getEmail());
+    public UserDto registerUser(RegisterUserDto dto) {
+        boolean exists = userRepository.existsByEmail(dto.getEmail());
 
-        if (ok) {
+        if (exists) {
             throw CustomException.BadRequest("Esta cuenta ya esta registrada");
         }
 
-        User userDb = new User();
-        userDb.setEmail(user.getEmail());
-        userDb.setName(user.getUsername());
-        userDb.setPassword(user.getPassword());
+        Optional<Role> role = this.roleRepository.findByRole("USER");
 
-        userDb = service.save(userDb);
+        if (role.isEmpty()) {
+            throw CustomException.InternalServerError("User role not exists");
+        }
 
-        HashMap<String, Object> res = new HashMap<>();
-        res.put("user", userDb);
+        User user = new User();
+        user.setEmail(dto.getEmail());
+        user.setName(dto.getName());
+        user.setPassword(dto.getPassword());
+        user.setRole(role.get());
 
-        return res;
+        User savedUser = userRepository.save(user);
+
+        return mapToUserDto(savedUser);
+    }
+
+    public UserDto loginUser(LoginUserDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> CustomException.BadRequest("Correo o contraseña incorrectos"));
+
+        if (!user.getPassword().equals(dto.getPassword())) {
+            throw CustomException.BadRequest("Correo o contraseña incorrectos");
+        }
+
+        return mapToUserDto(user);
+    }
+
+    private UserDto mapToUserDto(User user) {
+        return new UserDto(user.getName(), user.getEmail());
     }
 
 }

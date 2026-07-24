@@ -8,6 +8,12 @@ import com.xiplatani.viajes.libreria.infrastructure.entities.UserEntity;
 @Component
 public class UserMapper implements IBaseMapper<User, UserEntity> {
 
+    private final RoleMapper roleMapper;
+
+    public UserMapper(RoleMapper roleMapper) {
+        this.roleMapper = roleMapper;
+    }
+
     @Override
     public User toDomain(UserEntity entity) {
         if (entity == null) {
@@ -18,6 +24,9 @@ public class UserMapper implements IBaseMapper<User, UserEntity> {
         user.setName(entity.getName());
         user.setEmail(entity.getEmail());
         user.setPassword(entity.getPassword());
+        if (entity.getRoles() != null) {
+            user.setRoles(roleMapper.toDomainList(entity.getRoles()));
+        }
         return user;
     }
 
@@ -31,6 +40,10 @@ public class UserMapper implements IBaseMapper<User, UserEntity> {
         entity.setName(domain.getName());
         entity.setEmail(domain.getEmail());
         entity.setPassword(domain.getPassword());
+        if (domain.getRoles() != null) {
+            entity.setRoles(roleMapper.toEntityList(domain.getRoles()));
+        }
         return entity;
     }
 }
+
