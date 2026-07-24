@@ -36,26 +36,33 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Rutas públicas
-                        .requestMatchers("/v1/auth/register", "/v1/auth/login", "/v1/api/seed").permitAll()
-                        .requestMatchers("/v1/auth/refresh-token").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/v1/books", "/v1/books/{id}").permitAll()
+                        .requestMatchers("/v1/api/auth/register", "/v1/api/auth/login", "/v1/api/seed").permitAll()
+                        .requestMatchers("/v1/api/auth/refresh-token").authenticated()
 
-                        .requestMatchers(HttpMethod.POST, "/v1/books/{id}/request-loan").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/v1/books/requests/my-requests").authenticated()
+                        // Rutas exclusivas del Administrador
+                        .requestMatchers("/v1/api/admin/**").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/v1/books").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/v1/books/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/v1/books/{id}").hasRole("ADMIN")
+                        // Rutas públicas / lector para consulta de libros
+                        .requestMatchers(HttpMethod.GET, "/v1/api/books", "/v1/api/books/{id}").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/v1/books/requests/{requestId}/approve")
+                        // Rutas de solicitudes para lectores autenticados
+                        .requestMatchers(HttpMethod.POST, "/v1/api/books/{id}/request-loan").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/v1/api/books/requests/my-requests").authenticated()
+
+                        // Rutas del Administrador para gestión de catálogo de libros
+                        .requestMatchers(HttpMethod.POST, "/v1/api/books").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/v1/api/books/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/v1/api/books/{id}").hasRole("ADMIN")
+
+                        // Rutas de aprobación/devolución para Bibliotecario y Administrador
+                        .requestMatchers(HttpMethod.POST, "/v1/api/books/requests/{requestId}/approve")
                         .hasAnyRole("ADMIN", "LIBRARIAN")
-
-                        .requestMatchers(HttpMethod.POST, "/v1/books/requests/{requestId}/reject")
+                        .requestMatchers(HttpMethod.POST, "/v1/api/books/requests/{requestId}/reject")
                         .hasAnyRole("ADMIN", "LIBRARIAN")
-
-                        .requestMatchers(HttpMethod.POST, "/v1/books/requests/{requestId}/return")
+                        .requestMatchers(HttpMethod.POST, "/v1/api/books/requests/{requestId}/return")
                         .hasAnyRole("ADMIN", "LIBRARIAN")
-                        .requestMatchers(HttpMethod.GET, "/v1/books/requests/pending").hasAnyRole("ADMIN", "LIBRARIAN")
+                        .requestMatchers(HttpMethod.GET, "/v1/api/books/requests/pending")
+                        .hasAnyRole("ADMIN", "LIBRARIAN")
 
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

@@ -56,7 +56,23 @@ public class User {
     }
 
     public void setRole(Role role) {
-        this.roles.add(role);
+        addRole(role);
+    }
+
+    public void addRole(Role role) {
+        if (this.roles == null) {
+            this.roles = new ArrayList<>();
+        }
+        boolean exists = this.roles.stream().anyMatch(r -> r.getRole().equalsIgnoreCase(role.getRole()));
+        if (!exists) {
+            this.roles.add(role);
+        }
+    }
+
+    public void removeRole(String roleName) {
+        if (this.roles != null) {
+            this.roles.removeIf(r -> r.getRole().equalsIgnoreCase(roleName));
+        }
     }
 
     public Boolean getIsActive() {

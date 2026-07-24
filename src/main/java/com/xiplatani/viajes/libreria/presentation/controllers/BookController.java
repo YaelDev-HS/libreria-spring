@@ -19,7 +19,7 @@ import com.xiplatani.viajes.libreria.application.useCases.BookUseCases;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/books")
+@RequestMapping("/v1/api/books")
 public class BookController {
 
     private final BookUseCases bookUseCases;

@@ -14,7 +14,7 @@ import com.xiplatani.viajes.libreria.application.useCases.AuthUseCases;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/v1/api/auth")
 public class AuthController {
 
     private final AuthUseCases useCases;
