@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             Claims claims = jwtService.extractClaims(jwt);
             String userEmail = claims.getSubject();
-            Long userID = (Long) claims.get("user_id");
+            Long userID = Long.valueOf((Integer) claims.get("userId"));
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 @SuppressWarnings("unchecked")
@@ -66,6 +66,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (Exception e) {
+            System.out.println(e);
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"error\": \"Token is not valid or expired.\"}");

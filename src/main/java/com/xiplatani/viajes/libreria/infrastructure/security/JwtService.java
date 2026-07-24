@@ -34,7 +34,6 @@ public class JwtService {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("user_id", user.getId());
 
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
             claims.put("roles", user.getRoles().stream().map(Role::getRole).toList());
@@ -42,6 +41,7 @@ public class JwtService {
 
         return Jwts.builder()
                 .claims(claims)
+                .claim("userId", user.getId())
                 .subject(user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
