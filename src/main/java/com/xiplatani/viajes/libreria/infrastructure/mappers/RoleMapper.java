@@ -16,6 +16,9 @@ public class RoleMapper implements IBaseMapper<Role, RoleEntity> {
         Role role = new Role();
         role.setId(entity.getId());
         role.setRole(entity.getRole());
+        role.setCreatedAt(entity.getCreatedAt());
+        role.setUpdatedAt(entity.getUpdatedAt());
+
         return role;
     }
 
@@ -27,6 +30,9 @@ public class RoleMapper implements IBaseMapper<Role, RoleEntity> {
         RoleEntity entity = new RoleEntity();
         entity.setId(domain.getId());
         entity.setRole(domain.getRole());
+        entity.setCreatedAt(domain.getCreatedAt());
+        entity.setUpdatedAt(domain.getUpdatedAt());
+
         return entity;
     }
 }

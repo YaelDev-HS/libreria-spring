@@ -24,6 +24,10 @@ public class UserMapper implements IBaseMapper<User, UserEntity> {
         user.setName(entity.getName());
         user.setEmail(entity.getEmail());
         user.setPassword(entity.getPassword());
+        user.setCreatedAt(entity.getCreatedAt());
+        user.setUpdatedAt(entity.getUpdatedAt());
+        user.setIsActive(entity.getIsActive());
+
         if (entity.getRoles() != null) {
             user.setRoles(roleMapper.toDomainList(entity.getRoles()));
         }
@@ -40,10 +44,13 @@ public class UserMapper implements IBaseMapper<User, UserEntity> {
         entity.setName(domain.getName());
         entity.setEmail(domain.getEmail());
         entity.setPassword(domain.getPassword());
+        entity.setCreatedAt(domain.getCreatedAt());
+        entity.setUpdatedAt(domain.getUpdatedAt());
+        entity.setIsActive(domain.getIsActive());
+
         if (domain.getRoles() != null) {
             entity.setRoles(roleMapper.toEntityList(domain.getRoles()));
         }
         return entity;
     }
 }
-

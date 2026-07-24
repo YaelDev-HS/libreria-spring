@@ -1,5 +1,7 @@
 package com.xiplatani.viajes.libreria.infrastructure.entities;
 
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +19,12 @@ public class RoleEntity {
 
     @Column(nullable = false, unique = true)
     private String role;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     public RoleEntity() {
     }
@@ -45,4 +53,21 @@ public class RoleEntity {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
 }

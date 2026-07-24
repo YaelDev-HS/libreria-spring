@@ -1,9 +1,13 @@
 package com.xiplatani.viajes.libreria.domain.models;
 
+import java.util.Date;
+
 public class Role {
 
     private Long id;
     private String role;
+    private Date createdAt;
+    private Date updatedAt;
 
     public Role() {
     }
@@ -32,4 +36,21 @@ public class Role {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
 }

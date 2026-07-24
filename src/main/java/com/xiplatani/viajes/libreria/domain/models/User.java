@@ -1,6 +1,7 @@
 package com.xiplatani.viajes.libreria.domain.models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class User {
@@ -9,6 +10,9 @@ public class User {
     private String name;
     private String email;
     private String password;
+    private Boolean isActive;
+    private Date createdAt;
+    private Date updatedAt;
     private List<Role> roles = new ArrayList<>();
 
     public Long getId() {
@@ -53,6 +57,30 @@ public class User {
 
     public void setRole(Role role) {
         this.roles.add(role);
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
 }
