@@ -34,9 +34,12 @@ public class JwtService {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("user_id", user.getId());
+
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
             claims.put("roles", user.getRoles().stream().map(Role::getRole).toList());
         }
+
         return Jwts.builder()
                 .claims(claims)
                 .subject(user.getEmail())

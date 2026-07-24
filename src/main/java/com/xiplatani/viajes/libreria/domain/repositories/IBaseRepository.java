@@ -1,6 +1,7 @@
 package com.xiplatani.viajes.libreria.domain.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IBaseRepository<D> {
 
@@ -8,7 +9,7 @@ public interface IBaseRepository<D> {
 
     public D update(D model);
 
-    public D findById(Long id);
+    public Optional<D> findById(Long id);
 
     public List<D> findAll();
 

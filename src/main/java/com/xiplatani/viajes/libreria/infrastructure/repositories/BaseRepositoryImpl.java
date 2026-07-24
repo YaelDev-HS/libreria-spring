@@ -1,6 +1,7 @@
 package com.xiplatani.viajes.libreria.infrastructure.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -33,10 +34,9 @@ public abstract class BaseRepositoryImpl<D, E, ID> implements IBaseRepository<D>
 
     @Override
     @SuppressWarnings("unchecked")
-    public D findById(Long id) {
+    public Optional<D> findById(Long id) {
         return jpaRepository.findById((ID) id)
-                .map(mapper::toDomain)
-                .orElse(null);
+                .map(mapper::toDomain);
     }
 
     @Override

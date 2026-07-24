@@ -53,6 +53,15 @@ public class HandleExceptions {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(org.springframework.dao.OptimisticLockingFailureException.class)
+    public ResponseEntity<Map<String, Object>> handleOptimisticLockingException(
+            org.springframework.dao.OptimisticLockingFailureException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("error",
+                "El recurso fue modificado por otro usuario. Por favor, verifique el estado del recurso.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         System.out.println(ex);

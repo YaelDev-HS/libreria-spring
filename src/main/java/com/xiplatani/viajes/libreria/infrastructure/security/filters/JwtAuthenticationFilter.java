@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.xiplatani.viajes.libreria.infrastructure.security.JwtService;
+import com.xiplatani.viajes.libreria.infrastructure.security.UserAuth;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -45,6 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             Claims claims = jwtService.extractClaims(jwt);
             String userEmail = claims.getSubject();
+            Long userID = (Long) claims.get("user_id");
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 @SuppressWarnings("unchecked")
@@ -53,8 +55,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         ? roles.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r)).toList()
                         : List.of();
 
+                UserAuth userAuth = new UserAuth(userID, userEmail);
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userEmail,
+                        userAuth,
                         null,
                         authorities);
 
