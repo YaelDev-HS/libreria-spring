@@ -44,7 +44,7 @@ public class AdminUseCases {
                 .orElseThrow(() -> CustomException.NotFound("Usuario no encontrado."));
 
         Role role = roleRepository.findByRole(targetRoleName)
-                .orElseGet(() -> roleRepository.save(new Role(targetRoleName)));
+            .orElseThrow(() -> CustomException.BadRequest("Este role no esta disponible"));
 
         boolean alreadyHasRole = user.getRoles().stream()
                 .anyMatch(r -> r.getRole().equalsIgnoreCase(targetRoleName));
@@ -61,6 +61,7 @@ public class AdminUseCases {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Rol " + targetRoleName + " asignado exitosamente al usuario.");
         response.put("user", mapToUserDto(updatedUser));
+
         return response;
     }
 
@@ -90,6 +91,7 @@ public class AdminUseCases {
 
     private UserDto mapToUserDto(User user) {
         UserDto dto = new UserDto();
+        dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setIsActive(user.getIsActive());

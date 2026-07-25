@@ -1,5 +1,6 @@
 package com.xiplatani.viajes.libreria.infrastructure.mappers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface IBaseMapper<D, E> {
@@ -10,15 +11,15 @@ public interface IBaseMapper<D, E> {
 
     default List<D> toDomainList(List<E> entities) {
         if (entities == null) {
-            return List.of();
+            return new ArrayList<>();
         }
-        return entities.stream().map(this::toDomain).toList();
+        return new ArrayList<>(entities.stream().map(this::toDomain).toList());
     }
 
     default List<E> toEntityList(List<D> domains) {
         if (domains == null) {
-            return List.of();
+            return new ArrayList<>();
         }
-        return domains.stream().map(this::toEntity).toList();
+        return new ArrayList<>(domains.stream().map(this::toEntity).toList());
     }
 }

@@ -52,7 +52,11 @@ public class User {
     }
 
     public void setRoles(List<Role> roles) {
-        this.roles = roles;
+        if (roles == null) {
+            this.roles = new ArrayList<>();
+        } else {
+            this.roles = new ArrayList<>(roles);
+        }
     }
 
     public void setRole(Role role) {
@@ -63,10 +67,7 @@ public class User {
         if (this.roles == null) {
             this.roles = new ArrayList<>();
         }
-        boolean exists = this.roles.stream().anyMatch(r -> r.getRole().equalsIgnoreCase(role.getRole()));
-        if (!exists) {
-            this.roles.add(role);
-        }
+        this.roles.add(role);
     }
 
     public void removeRole(String roleName) {

@@ -64,7 +64,9 @@ public class HandleExceptions {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+        System.out.println("===============");
         System.out.println(ex);
+        System.out.println("===============");
 
         Map<String, Object> response = new HashMap<>();
         response.put("error", "Ocurrió un error inesperado, por favor intente de nuevo más tarde.");

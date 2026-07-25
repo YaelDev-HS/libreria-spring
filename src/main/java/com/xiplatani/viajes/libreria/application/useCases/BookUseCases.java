@@ -67,7 +67,7 @@ public class BookUseCases {
     }
 
     public Map<String, Object> getAllBooks() {
-        List<BookResponseDto> books = bookRepository.findAll().stream()
+        List<BookResponseDto> books = bookRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::mapToBookResponseDto)
                 .toList();
 

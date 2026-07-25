@@ -8,6 +8,7 @@ import com.xiplatani.viajes.libreria.application.dtos.auth.RoleDto;
 
 public class UserDto {
 
+    private Long id;
     private String name;
     private String email;
     private Boolean isActive;
@@ -18,13 +19,22 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String name, String email, Boolean isActive, Date createdAt, Date updatedAt, List<RoleDto> roles) {
+    public UserDto(Long id, String name, String email, Boolean isActive, Date createdAt, Date updatedAt, List<RoleDto> roles) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.isActive = isActive;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.roles = roles;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
