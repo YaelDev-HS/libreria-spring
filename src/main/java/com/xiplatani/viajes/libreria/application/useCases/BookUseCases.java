@@ -245,13 +245,20 @@ public class BookUseCases {
         return response;
     }
 
-    public Map<String, Object> getPendingLoanRequests() {
-        List<LoanRequestResponseDto> requests = loanRequestRepository.findByStatus("PENDING").stream()
+    public Map<String, Object> getLoanRequestsByStatus(String status) {
+        List<LoanRequest> requests;
+        if (status == null || status.trim().isEmpty() || "ALL".equalsIgnoreCase(status)) {
+            requests = loanRequestRepository.findAllByOrderByCreatedAtDesc();
+        } else {
+            requests = loanRequestRepository.findByStatusOrderByCreatedAtDesc(status.toUpperCase());
+        }
+
+        List<LoanRequestResponseDto> dtos = requests.stream()
                 .map(this::mapToLoanRequestResponseDto)
                 .toList();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("loanRequests", requests);
+        response.put("loanRequests", dtos);
         return response;
     }
 

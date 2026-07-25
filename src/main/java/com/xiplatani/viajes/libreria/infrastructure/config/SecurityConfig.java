@@ -71,7 +71,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "LIBRARIAN")
                         .requestMatchers(HttpMethod.POST, "/v1/api/books/requests/{requestId}/return")
                         .hasAnyRole("ADMIN", "LIBRARIAN")
-                        .requestMatchers(HttpMethod.GET, "/v1/api/books/requests/pending")
+                        .requestMatchers(HttpMethod.GET, "/v1/api/books/requests", "/v1/api/books/requests/pending")
                         .hasAnyRole("ADMIN", "LIBRARIAN")
 
                         .anyRequest().authenticated())
@@ -94,4 +94,3 @@ public class SecurityConfig {
         return source;
     }
 }
-

@@ -10,6 +10,10 @@ public interface ILoanRequestRepository extends IBaseRepository<LoanRequest> {
 
     List<LoanRequest> findByStatus(String status);
 
+    List<LoanRequest> findAllByOrderByCreatedAtDesc();
+
+    List<LoanRequest> findByStatusOrderByCreatedAtDesc(String status);
+
     Long countActiveLoansByUserId(Long userId);
 
     Boolean hasPendindBookByUserID(Long userID, Long bookId);

@@ -33,6 +33,16 @@ public class LoanRequestRepositoryImpl extends BaseRepositoryImpl<LoanRequest, L
     }
 
     @Override
+    public List<LoanRequest> findAllByOrderByCreatedAtDesc() {
+        return mapper.toDomainList(jpaLoanRequestRepository.findAllByOrderByCreatedAtDesc());
+    }
+
+    @Override
+    public List<LoanRequest> findByStatusOrderByCreatedAtDesc(String status) {
+        return mapper.toDomainList(jpaLoanRequestRepository.findByStatusOrderByCreatedAtDesc(status));
+    }
+
+    @Override
     public Long countActiveLoansByUserId(Long userId) {
         return jpaLoanRequestRepository.countActiveLoansByUserId(userId);
     }

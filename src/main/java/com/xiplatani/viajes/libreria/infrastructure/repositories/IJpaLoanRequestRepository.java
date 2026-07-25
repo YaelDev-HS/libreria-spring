@@ -16,6 +16,10 @@ public interface IJpaLoanRequestRepository extends JpaRepository<LoanRequestEnti
 
     List<LoanRequestEntity> findByStatus(String status);
 
+    List<LoanRequestEntity> findAllByOrderByCreatedAtDesc();
+
+    List<LoanRequestEntity> findByStatusOrderByCreatedAtDesc(String status);
+
     @Query("SELECT COUNT(l) FROM LoanRequestEntity l WHERE l.user.id = :userId AND l.status = 'APPROVED'")
     Long countActiveLoansByUserId(@Param("userId") Long userId);
 

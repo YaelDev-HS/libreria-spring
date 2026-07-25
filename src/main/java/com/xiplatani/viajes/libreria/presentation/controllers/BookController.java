@@ -63,7 +63,7 @@ public class BookController {
     @PostMapping("/requests/{requestId}/approve")
     public ResponseEntity<Map<String, Object>> approveLoanRequest(
             @PathVariable Long requestId,
-            @RequestParam(defaultValue = "false") Boolean rejectOthers) {
+            @RequestParam(name = "rejectOthers", defaultValue = "false") Boolean rejectOthers) {
         return ResponseEntity.ok(bookUseCases.approveLoanRequest(requestId, rejectOthers));
     }
 
@@ -82,9 +82,9 @@ public class BookController {
         return ResponseEntity.ok(bookUseCases.getMyLoanRequests());
     }
 
-    @GetMapping("/requests/pending")
-    public ResponseEntity<Map<String, Object>> getPendingLoanRequests() {
-        return ResponseEntity.ok(bookUseCases.getPendingLoanRequests());
+    @GetMapping("/requests")
+    public ResponseEntity<Map<String, Object>> getLoanRequestsByStatus(@RequestParam(required = false) String status){
+        return ResponseEntity.ok(bookUseCases.getLoanRequestsByStatus(status));
     }
 
 }
