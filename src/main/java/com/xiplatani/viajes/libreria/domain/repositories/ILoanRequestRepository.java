@@ -12,4 +12,6 @@ public interface ILoanRequestRepository extends IBaseRepository<LoanRequest> {
 
     Long countActiveLoansByUserId(Long userId);
 
+    Boolean hasPendindBookByUserID(Long userID, Long bookId);
+
 }

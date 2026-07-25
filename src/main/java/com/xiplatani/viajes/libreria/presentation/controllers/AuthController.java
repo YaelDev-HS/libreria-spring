@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.xiplatani.viajes.libreria.application.dtos.auth.AuthResponseDto;
 import com.xiplatani.viajes.libreria.application.dtos.auth.LoginUserDto;
 import com.xiplatani.viajes.libreria.application.dtos.auth.RegisterUserDto;
 import com.xiplatani.viajes.libreria.application.useCases.AuthUseCases;
@@ -24,20 +25,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> registerUser(@RequestBody @Valid RegisterUserDto dto) {
+    public ResponseEntity<AuthResponseDto> registerUser(@RequestBody @Valid RegisterUserDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 useCases.registerUser(dto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> loginUser(@RequestBody @Valid LoginUserDto dto) {
+    public ResponseEntity<AuthResponseDto> loginUser(@RequestBody @Valid LoginUserDto dto) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 useCases.loginUser(dto));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<Object> refreshToken() {
-        return ResponseEntity.ok("Ruta protegida /v1/auth/refresh-token accedida correctamente con JWT");
+    public ResponseEntity<AuthResponseDto> refreshToken() {
+        return ResponseEntity.ok(useCases.refreshToken());
     }
 
 }

@@ -20,22 +20,18 @@ import com.xiplatani.viajes.libreria.domain.models.LoanRequest;
 import com.xiplatani.viajes.libreria.domain.models.User;
 import com.xiplatani.viajes.libreria.domain.repositories.IBookRepository;
 import com.xiplatani.viajes.libreria.domain.repositories.ILoanRequestRepository;
-import com.xiplatani.viajes.libreria.domain.repositories.IUserRepository;
 import com.xiplatani.viajes.libreria.infrastructure.security.UserAuth;
 
 @Service
 public class BookUseCases {
 
     private final IBookRepository bookRepository;
-    private final IUserRepository userRepository;
     private final ILoanRequestRepository loanRequestRepository;
 
     public BookUseCases(
             IBookRepository bookRepository,
-            IUserRepository userRepository,
             ILoanRequestRepository loanRequestRepository) {
         this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
         this.loanRequestRepository = loanRequestRepository;
     }
 
@@ -118,6 +114,11 @@ public class BookUseCases {
 
     public Map<String, Object> requestLoan(Long bookId) {
         UserAuth userAuth = this.getUserAuth();
+        Boolean ok = this.loanRequestRepository.hasPendindBookByUserID(userAuth.userId(), bookId);
+
+        if(ok){
+            throw CustomException.BadRequest("Ya tienes una peticion pendiente para este libro");
+        }
 
         Long activeCount = loanRequestRepository.countActiveLoansByUserId(userAuth.userId());
 

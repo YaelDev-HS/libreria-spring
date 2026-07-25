@@ -46,7 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             Claims claims = jwtService.extractClaims(jwt);
             String userEmail = claims.getSubject();
-            Long userID = Long.valueOf((Integer) claims.get("userId"));
+            Object rawUserId = claims.get("userId");
+            Long userID = rawUserId instanceof Number number ? number.longValue() : Long.valueOf(rawUserId.toString());
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 @SuppressWarnings("unchecked")

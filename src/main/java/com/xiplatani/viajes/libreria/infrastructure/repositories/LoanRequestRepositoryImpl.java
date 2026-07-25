@@ -35,4 +35,9 @@ public class LoanRequestRepositoryImpl extends BaseRepositoryImpl<LoanRequest, L
     public Long countActiveLoansByUserId(Long userId) {
         return jpaLoanRequestRepository.countActiveLoansByUserId(userId);
     }
+
+    public Boolean hasPendindBookByUserID(Long userId, Long bookId){
+        return jpaLoanRequestRepository.existsByUserIdAndBookIdAndStatus(userId, bookId, "PENDING");
+    }
+
 }

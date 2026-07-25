@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import com.xiplatani.viajes.libreria.domain.models.User;
 import com.xiplatani.viajes.libreria.domain.repositories.IRoleRepository;
 import com.xiplatani.viajes.libreria.domain.repositories.IUserRepository;
 import com.xiplatani.viajes.libreria.infrastructure.security.JwtService;
+import com.xiplatani.viajes.libreria.infrastructure.security.UserAuth;
 
 @Service
 public class AuthUseCases {
@@ -80,6 +83,24 @@ public class AuthUseCases {
 
         String token = jwtService.generateToken(user);
         return new AuthResponseDto(token, mapToUserDto(user));
+    }
+
+    public AuthResponseDto refreshToken() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated() || !(auth.getPrincipal() instanceof UserAuth userAuth)) {
+            throw CustomException.Unauthorized("Usuario no autenticado.");
+        }
+
+        User user = userRepository.findById(userAuth.userId())
+                .orElseThrow(() -> CustomException.Unauthorized("Usuario no encontrado."));
+
+        if (!user.getIsActive()) {
+            throw CustomException.BadRequest("Esta cuenta ha sido desactivada. Contacta soporte.");
+        }
+
+        String newToken = jwtService.generateToken(user);
+        return new AuthResponseDto(newToken, mapToUserDto(user));
     }
 
     private UserDto mapToUserDto(User user) {

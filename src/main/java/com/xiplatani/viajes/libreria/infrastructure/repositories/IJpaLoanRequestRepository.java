@@ -14,7 +14,9 @@ public interface IJpaLoanRequestRepository extends JpaRepository<LoanRequestEnti
 
     List<LoanRequestEntity> findByStatus(String status);
 
-    @Query("SELECT COUNT(l) FROM LoanRequestEntity l WHERE l.user.id = :userId AND l.status IN ('PENDING', 'APPROVED')")
+    @Query("SELECT COUNT(l) FROM LoanRequestEntity l WHERE l.user.id = :userId AND l.status IN ('APPROVED')")
     Long countActiveLoansByUserId(@Param("userId") Long userId);
+
+    boolean existsByUserIdAndBookIdAndStatus(Long userId, Long bookId, String status);
 
 }
