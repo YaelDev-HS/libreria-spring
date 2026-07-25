@@ -7,6 +7,8 @@ public interface IBaseRepository<D> {
 
     public D save(D model);
 
+    public List<D> saveAll(List<D> models);
+
     public D update(D model);
 
     public Optional<D> findById(Long id);

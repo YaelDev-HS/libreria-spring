@@ -26,6 +26,13 @@ public abstract class BaseRepositoryImpl<D, E, ID> implements IBaseRepository<D>
     }
 
     @Override
+    public List<D> saveAll(List<D> models) {
+        List<E> entities = mapper.toEntityList(models);
+        List<E> savedEntities = jpaRepository.saveAll(entities);
+        return mapper.toDomainList(savedEntities);
+    }
+
+    @Override
     public D update(D model) {
         E entity = mapper.toEntity(model);
         E updatedEntity = jpaRepository.save(entity);

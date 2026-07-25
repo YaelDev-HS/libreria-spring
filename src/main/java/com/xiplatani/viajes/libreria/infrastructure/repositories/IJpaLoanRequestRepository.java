@@ -12,13 +12,17 @@ import com.xiplatani.viajes.libreria.infrastructure.entities.LoanRequestEntity;
 
 public interface IJpaLoanRequestRepository extends JpaRepository<LoanRequestEntity, Long> {
 
-    List<LoanRequestEntity> findByUserId(Long userId);
+    @Query("SELECT l FROM LoanRequestEntity l JOIN FETCH l.user JOIN FETCH l.book WHERE l.user.id = :userId ORDER BY l.createdAt DESC")
+    List<LoanRequestEntity> findByUserId(@Param("userId") Long userId);
 
-    List<LoanRequestEntity> findByStatus(String status);
+    @Query("SELECT l FROM LoanRequestEntity l JOIN FETCH l.user JOIN FETCH l.book WHERE l.status = :status ORDER BY l.createdAt DESC")
+    List<LoanRequestEntity> findByStatus(@Param("status") String status);
 
+    @Query("SELECT l FROM LoanRequestEntity l JOIN FETCH l.user JOIN FETCH l.book WHERE l.status = :status ORDER BY l.createdAt DESC")
+    List<LoanRequestEntity> findByStatusOrderByCreatedAtDesc(@Param("status") String status);
+
+    @Query("SELECT l FROM LoanRequestEntity l JOIN FETCH l.user JOIN FETCH l.book ORDER BY l.createdAt DESC")
     List<LoanRequestEntity> findAllByOrderByCreatedAtDesc();
-
-    List<LoanRequestEntity> findByStatusOrderByCreatedAtDesc(String status);
 
     @Query("SELECT COUNT(l) FROM LoanRequestEntity l WHERE l.user.id = :userId AND l.status = 'APPROVED'")
     Long countActiveLoansByUserId(@Param("userId") Long userId);

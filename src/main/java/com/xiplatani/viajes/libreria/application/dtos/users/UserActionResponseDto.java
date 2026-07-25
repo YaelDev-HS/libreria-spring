@@ -1,0 +1,30 @@
+package com.xiplatani.viajes.libreria.application.dtos.users;
+
+public class UserActionResponseDto {
+    private String message;
+    private UserDto user;
+
+    public UserActionResponseDto() {
+    }
+
+    public UserActionResponseDto(String message, UserDto user) {
+        this.message = message;
+        this.user = user;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public UserDto getUser() {
+        return user;
+    }
+
+    public void setUser(UserDto user) {
+        this.user = user;
+    }
+}

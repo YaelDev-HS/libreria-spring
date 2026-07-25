@@ -1,7 +1,5 @@
 package com.xiplatani.viajes.libreria.presentation.controllers;
 
-import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xiplatani.viajes.libreria.application.dtos.admin.AssignRoleDto;
+import com.xiplatani.viajes.libreria.application.dtos.users.UserActionResponseDto;
+import com.xiplatani.viajes.libreria.application.dtos.users.UserListResponseDto;
 import com.xiplatani.viajes.libreria.application.useCases.AdminUseCases;
 
 import jakarta.validation.Valid;
@@ -26,19 +26,19 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<Map<String, Object>> getAllUsers() {
+    public ResponseEntity<UserListResponseDto> getAllUsers() {
         return ResponseEntity.ok(adminUseCases.getAllUsers());
     }
 
     @PostMapping("/users/{userId}/roles/add")
-    public ResponseEntity<Map<String, Object>> assignRole(
+    public ResponseEntity<UserActionResponseDto> assignRole(
             @PathVariable Long userId,
             @RequestBody @Valid AssignRoleDto dto) {
         return ResponseEntity.ok(adminUseCases.assignRole(userId, dto));
     }
 
     @PostMapping("/users/{userId}/roles/remove")
-    public ResponseEntity<Map<String, Object>> removeRole(
+    public ResponseEntity<UserActionResponseDto> removeRole(
             @PathVariable Long userId,
             @RequestBody @Valid AssignRoleDto dto) {
         return ResponseEntity.ok(adminUseCases.removeRole(userId, dto));

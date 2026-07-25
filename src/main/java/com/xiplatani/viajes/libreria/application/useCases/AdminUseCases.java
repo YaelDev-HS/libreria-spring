@@ -1,15 +1,15 @@
 package com.xiplatani.viajes.libreria.application.useCases;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.xiplatani.viajes.libreria.application.dtos.admin.AssignRoleDto;
 import com.xiplatani.viajes.libreria.application.dtos.auth.RoleDto;
+import com.xiplatani.viajes.libreria.application.dtos.users.UserActionResponseDto;
 import com.xiplatani.viajes.libreria.application.dtos.users.UserDto;
+import com.xiplatani.viajes.libreria.application.dtos.users.UserListResponseDto;
 import com.xiplatani.viajes.libreria.domain.exceptions.CustomException;
 import com.xiplatani.viajes.libreria.domain.models.Role;
 import com.xiplatani.viajes.libreria.domain.models.User;
@@ -27,17 +27,15 @@ public class AdminUseCases {
         this.roleRepository = roleRepository;
     }
 
-    public Map<String, Object> getAllUsers() {
+    public UserListResponseDto getAllUsers() {
         List<UserDto> users = userRepository.findAll().stream()
                 .map(this::mapToUserDto)
                 .toList();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("users", users);
-        return response;
+        return new UserListResponseDto(users);
     }
 
-    public Map<String, Object> assignRole(Long userId, AssignRoleDto dto) {
+    public UserActionResponseDto assignRole(Long userId, AssignRoleDto dto) {
         String targetRoleName = dto.getRole();
 
         User user = userRepository.findById(userId)
@@ -57,15 +55,10 @@ public class AdminUseCases {
         user.setUpdatedAt(new Date());
 
         User updatedUser = userRepository.save(user);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Rol " + targetRoleName + " asignado exitosamente al usuario.");
-        response.put("user", mapToUserDto(updatedUser));
-
-        return response;
+        return new UserActionResponseDto("Rol " + targetRoleName + " asignado exitosamente al usuario.", mapToUserDto(updatedUser));
     }
 
-    public Map<String, Object> removeRole(Long userId, AssignRoleDto dto) {
+    public UserActionResponseDto removeRole(Long userId, AssignRoleDto dto) {
         String targetRoleName = dto.getRole().toUpperCase();
 
         User user = userRepository.findById(userId)
@@ -82,11 +75,7 @@ public class AdminUseCases {
         user.setUpdatedAt(new Date());
 
         User updatedUser = userRepository.save(user);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Rol " + targetRoleName + " removido exitosamente del usuario.");
-        response.put("user", mapToUserDto(updatedUser));
-        return response;
+        return new UserActionResponseDto("Rol " + targetRoleName + " removido exitosamente del usuario.", mapToUserDto(updatedUser));
     }
 
     private UserDto mapToUserDto(User user) {

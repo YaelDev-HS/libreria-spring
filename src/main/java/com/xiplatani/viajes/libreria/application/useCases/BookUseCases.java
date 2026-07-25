@@ -1,9 +1,7 @@
 package com.xiplatani.viajes.libreria.application.useCases;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,8 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xiplatani.viajes.libreria.application.dtos.auth.RoleDto;
+import com.xiplatani.viajes.libreria.application.dtos.books.BookActionResponseDto;
+import com.xiplatani.viajes.libreria.application.dtos.books.BookListResponseDto;
 import com.xiplatani.viajes.libreria.application.dtos.books.BookResponseDto;
 import com.xiplatani.viajes.libreria.application.dtos.books.CreateBookDto;
+import com.xiplatani.viajes.libreria.application.dtos.common.MessageResponseDto;
+import com.xiplatani.viajes.libreria.application.dtos.loans.LoanRequestActionResponseDto;
+import com.xiplatani.viajes.libreria.application.dtos.loans.LoanRequestListResponseDto;
 import com.xiplatani.viajes.libreria.application.dtos.loans.LoanRequestResponseDto;
 import com.xiplatani.viajes.libreria.application.dtos.users.UserDto;
 import com.xiplatani.viajes.libreria.domain.exceptions.CustomException;
@@ -50,7 +53,7 @@ public class BookUseCases {
         }
     }
 
-    public Map<String, Object> createBook(CreateBookDto dto) {
+    public BookActionResponseDto createBook(CreateBookDto dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
         book.setDescription(dto.getDescription());
@@ -60,33 +63,25 @@ public class BookUseCases {
         book.setUpdatedAt(new Date());
 
         Book savedBook = bookRepository.save(book);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Libro creado exitosamente.");
-        response.put("book", mapToBookResponseDto(savedBook));
-        return response;
+        return new BookActionResponseDto("Libro creado exitosamente.", mapToBookResponseDto(savedBook));
     }
 
-    public Map<String, Object> getAllBooks() {
+    public BookListResponseDto getAllBooks() {
         List<BookResponseDto> books = bookRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::mapToBookResponseDto)
                 .toList();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("books", books);
-        return response;
+        return new BookListResponseDto(books);
     }
 
-    public Map<String, Object> getBookById(Long id) {
+    public BookActionResponseDto getBookById(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> CustomException.NotFound("Libro no encontrado."));
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("book", mapToBookResponseDto(book));
-        return response;
+        return new BookActionResponseDto(null, mapToBookResponseDto(book));
     }
 
-    public Map<String, Object> updateBook(Long id, CreateBookDto dto) {
+    public BookActionResponseDto updateBook(Long id, CreateBookDto dto) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> CustomException.NotFound("Libro no encontrado."));
 
@@ -96,24 +91,18 @@ public class BookUseCases {
         book.setUpdatedAt(new Date());
 
         Book updatedBook = bookRepository.update(book);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Libro actualizado exitosamente.");
-        response.put("book", mapToBookResponseDto(updatedBook));
-        return response;
+        return new BookActionResponseDto("Libro actualizado exitosamente.", mapToBookResponseDto(updatedBook));
     }
 
-    public Map<String, Object> deleteBook(Long id) {
+    public MessageResponseDto deleteBook(Long id) {
         bookRepository.findById(id)
                 .orElseThrow(() -> CustomException.NotFound("Libro no encontrado."));
         bookRepository.delete(id);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Libro eliminado exitosamente.");
-        return response;
+        return new MessageResponseDto("Libro eliminado exitosamente.");
     }
 
-    public Map<String, Object> requestLoan(Long bookId) {
+    public LoanRequestActionResponseDto requestLoan(Long bookId) {
         UserAuth userAuth = this.getUserAuth();
         Boolean ok = this.loanRequestRepository.hasPendindBookByUserID(userAuth.userId(), bookId);
 
@@ -147,15 +136,11 @@ public class BookUseCases {
         loanRequest.setUpdatedAt(new Date());
 
         LoanRequest savedRequest = loanRequestRepository.save(loanRequest);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Solicitud de préstamo creada exitosamente.");
-        response.put("loanRequest", mapToLoanRequestResponseDto(savedRequest));
-        return response;
+        return new LoanRequestActionResponseDto("Solicitud de préstamo creada exitosamente.", mapToLoanRequestResponseDto(savedRequest));
     }
 
     @Transactional
-    public Map<String, Object> approveLoanRequest(Long requestId, Boolean rejectOthers) {
+    public LoanRequestActionResponseDto approveLoanRequest(Long requestId, Boolean rejectOthers) {
         LoanRequest request = loanRequestRepository.findById(requestId)
                 .orElseThrow(() -> CustomException.NotFound("Solicitud del usuario no encontrada."));
 
@@ -183,13 +168,10 @@ public class BookUseCases {
             loanRequestRepository.rejectOtherPendingRequestsByBookId(book.getId(), requestId);
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Solicitud de préstamo aprobada exitosamente.");
-        response.put("loanRequest", mapToLoanRequestResponseDto(updatedRequest));
-        return response;
+        return new LoanRequestActionResponseDto("Solicitud de préstamo aprobada exitosamente.", mapToLoanRequestResponseDto(updatedRequest));
     }
 
-    public Map<String, Object> rejectLoanRequest(Long requestId) {
+    public LoanRequestActionResponseDto rejectLoanRequest(Long requestId) {
         LoanRequest request = loanRequestRepository.findById(requestId)
                 .orElseThrow(() -> CustomException.NotFound("La solicitud no se encuentra disponible."));
 
@@ -202,14 +184,10 @@ public class BookUseCases {
         request.setUpdatedAt(new Date());
 
         LoanRequest updatedRequest = loanRequestRepository.update(request);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Solicitud de préstamo rechazada exitosamente.");
-        response.put("loanRequest", mapToLoanRequestResponseDto(updatedRequest));
-        return response;
+        return new LoanRequestActionResponseDto("Solicitud de préstamo rechazada exitosamente.", mapToLoanRequestResponseDto(updatedRequest));
     }
 
-    public Map<String, Object> returnLoanRequest(Long requestId) {
+    public LoanRequestActionResponseDto returnLoanRequest(Long requestId) {
         LoanRequest request = loanRequestRepository.findById(requestId)
                 .orElseThrow(() -> CustomException.NotFound("La solicitud no se encuentra disponible."));
 
@@ -227,25 +205,19 @@ public class BookUseCases {
         request.setUpdatedAt(new Date());
 
         LoanRequest updatedRequest = loanRequestRepository.update(request);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Devolución de libro confirmada exitosamente.");
-        response.put("loanRequest", mapToLoanRequestResponseDto(updatedRequest));
-        return response;
+        return new LoanRequestActionResponseDto("Devolución de libro confirmada exitosamente.", mapToLoanRequestResponseDto(updatedRequest));
     }
 
-    public Map<String, Object> getMyLoanRequests() {
+    public LoanRequestListResponseDto getMyLoanRequests() {
         UserAuth userAuth = this.getUserAuth();
         List<LoanRequestResponseDto> requests = loanRequestRepository.findByUserId(userAuth.userId()).stream()
                 .map(this::mapToLoanRequestResponseDto)
                 .toList();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("loanRequests", requests);
-        return response;
+        return new LoanRequestListResponseDto(requests);
     }
 
-    public Map<String, Object> getLoanRequestsByStatus(String status) {
+    public LoanRequestListResponseDto getLoanRequestsByStatus(String status) {
         List<LoanRequest> requests;
         if (status == null || status.trim().isEmpty() || "ALL".equalsIgnoreCase(status)) {
             requests = loanRequestRepository.findAllByOrderByCreatedAtDesc();
@@ -257,9 +229,7 @@ public class BookUseCases {
                 .map(this::mapToLoanRequestResponseDto)
                 .toList();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("loanRequests", dtos);
-        return response;
+        return new LoanRequestListResponseDto(dtos);
     }
 
     private BookResponseDto mapToBookResponseDto(Book book) {
