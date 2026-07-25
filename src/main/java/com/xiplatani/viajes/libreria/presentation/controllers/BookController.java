@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.xiplatani.viajes.libreria.application.dtos.books.CreateBookDto;
@@ -60,8 +61,10 @@ public class BookController {
     }
 
     @PostMapping("/requests/{requestId}/approve")
-    public ResponseEntity<Map<String, Object>> approveLoanRequest(@PathVariable Long requestId) {
-        return ResponseEntity.ok(bookUseCases.approveLoanRequest(requestId));
+    public ResponseEntity<Map<String, Object>> approveLoanRequest(
+            @PathVariable Long requestId,
+            @RequestParam(defaultValue = "false") Boolean rejectOthers) {
+        return ResponseEntity.ok(bookUseCases.approveLoanRequest(requestId, rejectOthers));
     }
 
     @PostMapping("/requests/{requestId}/reject")
@@ -83,4 +86,5 @@ public class BookController {
     public ResponseEntity<Map<String, Object>> getPendingLoanRequests() {
         return ResponseEntity.ok(bookUseCases.getPendingLoanRequests());
     }
+
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.xiplatani.viajes.libreria.application.dtos.auth.RoleDto;
 import com.xiplatani.viajes.libreria.application.dtos.books.BookResponseDto;
@@ -116,8 +117,8 @@ public class BookUseCases {
         UserAuth userAuth = this.getUserAuth();
         Boolean ok = this.loanRequestRepository.hasPendindBookByUserID(userAuth.userId(), bookId);
 
-        if(ok){
-            throw CustomException.BadRequest("Ya tienes una peticion pendiente para este libro");
+        if (ok) {
+            throw CustomException.BadRequest("Ya tienes una petición pendiente para este libro");
         }
 
         Long activeCount = loanRequestRepository.countActiveLoansByUserId(userAuth.userId());
@@ -153,7 +154,8 @@ public class BookUseCases {
         return response;
     }
 
-    public Map<String, Object> approveLoanRequest(Long requestId) {
+    @Transactional
+    public Map<String, Object> approveLoanRequest(Long requestId, Boolean rejectOthers) {
         LoanRequest request = loanRequestRepository.findById(requestId)
                 .orElseThrow(() -> CustomException.NotFound("Solicitud del usuario no encontrada."));
 
@@ -164,7 +166,7 @@ public class BookUseCases {
         Book book = request.getBook();
 
         if (Boolean.FALSE.equals(book.getIsAvailable())) {
-            throw CustomException.BadRequest("El libro ya no está disponible.");
+            throw CustomException.BadRequest("El libro ya no está disponible para préstamo.");
         }
 
         book.setIsAvailable(false);
@@ -176,6 +178,10 @@ public class BookUseCases {
         request.setUpdatedAt(new Date());
 
         LoanRequest updatedRequest = loanRequestRepository.update(request);
+
+        if (Boolean.TRUE.equals(rejectOthers) && book.getId() != null) {
+            loanRequestRepository.rejectOtherPendingRequestsByBookId(book.getId(), requestId);
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Solicitud de préstamo aprobada exitosamente.");

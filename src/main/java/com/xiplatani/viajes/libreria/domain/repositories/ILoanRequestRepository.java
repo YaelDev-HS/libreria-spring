@@ -14,4 +14,6 @@ public interface ILoanRequestRepository extends IBaseRepository<LoanRequest> {
 
     Boolean hasPendindBookByUserID(Long userID, Long bookId);
 
+    void rejectOtherPendingRequestsByBookId(Long bookId, Long requestId);
+
 }

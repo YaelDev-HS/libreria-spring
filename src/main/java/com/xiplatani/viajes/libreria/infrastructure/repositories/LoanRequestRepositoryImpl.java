@@ -1,5 +1,6 @@
 package com.xiplatani.viajes.libreria.infrastructure.repositories;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -36,8 +37,14 @@ public class LoanRequestRepositoryImpl extends BaseRepositoryImpl<LoanRequest, L
         return jpaLoanRequestRepository.countActiveLoansByUserId(userId);
     }
 
-    public Boolean hasPendindBookByUserID(Long userId, Long bookId){
+    @Override
+    public Boolean hasPendindBookByUserID(Long userId, Long bookId) {
         return jpaLoanRequestRepository.existsByUserIdAndBookIdAndStatus(userId, bookId, "PENDING");
+    }
+
+    @Override
+    public void rejectOtherPendingRequestsByBookId(Long bookId, Long requestId) {
+        jpaLoanRequestRepository.rejectOtherPendingRequestsByBookId(bookId, requestId, new Date());
     }
 
 }
